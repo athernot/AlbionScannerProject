@@ -1,11 +1,18 @@
+# -*- coding: utf-8 -*-
 import pyshark
+import sys
+import os
+
+# Set encoding untuk Windows console
+if sys.platform.startswith('win'):
+    os.system('chcp 65001 >nul 2>&1')  # Set to UTF-8
 
 # Konfigurasi dari hasil testing yang BERHASIL
 INTERFACE_NAME = '5'  # USB Tethering - interface 5 terbukti bekerja
 ALBION_PORT = 5056    # Port 5056 terbukti digunakan Albion (1080 packets detected)
 
 try:
-    print(f"🎯 Menangkap paket Albion Online")
+    print("TARGET: Menangkap paket Albion Online")
     print(f"Interface: {INTERFACE_NAME} (USB Tethering)")
     print(f"Port: {ALBION_PORT}")
     print("-" * 50)
@@ -13,15 +20,15 @@ try:
     # METHOD 1: BPF Filter (Berkeley Packet Filter)
     # Ini lebih reliable daripada display_filter
     try:
-        print("🔧 Mencoba dengan BPF filter...")
+        print("METHOD: Mencoba dengan BPF filter...")
         capture = pyshark.LiveCapture(
             interface=INTERFACE_NAME, 
             bpf_filter=f"udp port {ALBION_PORT}"
         )
         
-        print("✅ BPF filter berhasil dibuat!")
-        print("📱 Pastikan Albion Online berjalan dan ada aktivitas...")
-        print("⏹️  Tekan Ctrl+C untuk berhenti\n")
+        print("SUCCESS: BPF filter berhasil dibuat!")
+        print("NOTE: Pastikan Albion Online berjalan dan ada aktivitas...")
+        print("CTRL+C: Tekan Ctrl+C untuk berhenti\n")
         
         packet_count = 0
         for packet in capture.sniff_continuously():
@@ -36,30 +43,30 @@ try:
             
             # Determine direction
             if src_port == ALBION_PORT:
-                direction = "⬅️ INCOMING"
-                endpoint = f"{src_ip}:{src_port} → Local:{dst_port}"
+                direction = "<-- INCOMING"
+                endpoint = f"{src_ip}:{src_port} -> Local:{dst_port}"
             else:
-                direction = "➡️ OUTGOING"
-                endpoint = f"Local:{src_port} → {dst_ip}:{dst_port}"
+                direction = "--> OUTGOING"
+                endpoint = f"Local:{src_port} -> {dst_ip}:{dst_port}"
             
-            print(f"🎯 PACKET #{packet_count:3d} | {direction} | {endpoint} | {length} bytes")
+            print(f"PACKET #{packet_count:3d} | {direction} | {endpoint} | {length} bytes")
             
             # Stop after 10 packets for demo
             if packet_count >= 10:
-                print(f"\n✅ Successfully captured {packet_count} Albion packets!")
+                print(f"\nSUCCESS: Successfully captured {packet_count} Albion packets!")
                 break
         
         capture.close()
         
     except Exception as bpf_error:
-        print(f"❌ BPF filter gagal: {bpf_error}")
-        print("🔧 Mencoba fallback method...")
+        print(f"ERROR: BPF filter gagal: {bpf_error}")
+        print("FALLBACK: Mencoba fallback method...")
         
         # METHOD 2: Manual Filtering (Fallback)
         capture = pyshark.LiveCapture(interface=INTERFACE_NAME)
         
-        print("📡 Capturing all packets and filtering manually...")
-        print("📱 Pastikan Albion Online berjalan dan ada aktivitas...\n")
+        print("METHOD: Capturing all packets and filtering manually...")
+        print("NOTE: Pastikan Albion Online berjalan dan ada aktivitas...\n")
         
         albion_count = 0
         total_count = 0
@@ -83,25 +90,25 @@ try:
                         
                         # Direction
                         if src_port == ALBION_PORT:
-                            direction = "⬅️ INCOMING"
-                            endpoint = f"{src_ip}:{src_port} → Local:{dst_port}"
+                            direction = "<-- INCOMING"
+                            endpoint = f"{src_ip}:{src_port} -> Local:{dst_port}"
                         else:
-                            direction = "➡️ OUTGOING"
-                            endpoint = f"Local:{src_port} → {dst_ip}:{dst_port}"
+                            direction = "--> OUTGOING"
+                            endpoint = f"Local:{src_port} -> {dst_ip}:{dst_port}"
                         
-                        print(f"🎯 ALBION #{albion_count:3d} | {direction} | {endpoint} | {length} bytes")
+                        print(f"ALBION #{albion_count:3d} | {direction} | {endpoint} | {length} bytes")
                         
                         if albion_count >= 10:
-                            print(f"\n✅ Successfully captured {albion_count} Albion packets!")
+                            print(f"\nSUCCESS: Successfully captured {albion_count} Albion packets!")
                             break
                 
                 # Progress indicator
                 if total_count % 200 == 0:
-                    print(f"📊 Processed {total_count} total packets, found {albion_count} Albion packets")
+                    print(f"PROGRESS: Processed {total_count} total packets, found {albion_count} Albion packets")
                 
                 # Safety stop
                 if total_count >= 2000 and albion_count == 0:
-                    print("⏹️ Stopping - no Albion packets found in 2000 packets")
+                    print("TIMEOUT: Stopping - no Albion packets found in 2000 packets")
                     break
                     
             except AttributeError:
@@ -112,14 +119,14 @@ try:
         capture.close()
         
         if albion_count > 0:
-            print(f"🎉 SUCCESS! Found {albion_count} Albion packets from {total_count} total")
+            print(f"RESULT: SUCCESS! Found {albion_count} Albion packets from {total_count} total")
         else:
-            print(f"❌ No Albion packets found from {total_count} packets analyzed")
-            print("💡 Make sure Albion is running and active!")
+            print(f"RESULT: No Albion packets found from {total_count} packets analyzed")
+            print("NOTE: Make sure Albion is running and active!")
 
 except Exception as e:
-    print(f"❌ Error: {e}")
-    print("\n🔧 Troubleshooting:")
+    print(f"ERROR: {e}")
+    print("\nTROUBLESHOOTING:")
     print("1. Pastikan Albion Online berjalan dan ada aktivitas")
     print("2. Jalankan script sebagai Administrator")
     print("3. Pastikan tidak ada firewall yang memblokir")

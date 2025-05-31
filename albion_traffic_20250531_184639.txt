@@ -1,0 +1,28 @@
+ALBION ONLINE TRAFFIC ANALYSIS
+==================================================
+Generated: 2025-05-31 18:46:39
+Interface: 5
+Port: 5056
+
+STATISTICS:
+Runtime: 3.2 seconds
+Total packets: 60
+Incoming: 49 (8309 bytes)
+Outgoing: 11 (858 bytes)
+
+PACKET SIZES:
+121 bytes:  20 packets (33.3%)
+188 bytes:  14 packets (23.3%)
+ 74 bytes:   7 packets (11.7%)
+255 bytes:   4 packets (6.7%)
+ 66 bytes:   3 packets (5.0%)
+ 94 bytes:   3 packets (5.0%)
+141 bytes:   1 packets (1.7%)
+282 bytes:   1 packets (1.7%)
+169 bytes:   1 packets (1.7%)
+279 bytes:   1 packets (1.7%)
+215 bytes:   1 packets (1.7%)
+243 bytes:   1 packets (1.7%)
+247 bytes:   1 packets (1.7%)
+314 bytes:   1 packets (1.7%)
+207 bytes:   1 packets (1.7%)
